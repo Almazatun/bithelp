@@ -1,0 +1,35 @@
+{
+	"name": "bithelp",
+	"version": "1.0.0",
+	"main": "main.js",
+	"repository": "git@github.com:Almazatun/bithelp.git",
+	"author": "Almazatun <atunstyle@gmail.com>",
+	"license": "UNLICENSED",
+	"scripts": {
+		"start": "node dist/main.js",
+		"build": "tsc -p tsconfig.json",
+		"dev": "nodemon src/main.ts"
+	},
+	"dependencies": {
+		"@orbs-network/ton-access": "^2.3.3",
+		"@ton/core": "^0.56.3",
+		"@ton/crypto": "^3.2.0",
+		"@ton/ton": "^13.11.1",
+		"@types/cron": "^2.4.0",
+		"@types/node-fetch": "^2.6.11",
+		"bignumber.js": "^9.1.2",
+		"buffer": "^6.0.3",
+		"cron": "^3.1.7",
+		"dotenv": "^16.4.5",
+		"fastify": "^4.26.2",
+		"node-fetch": "^2.6.11",
+		"nodemon": "^3.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.12.7",
+		"@types/nodemon": "^1.19.6",
+		"ts-loader": "^9.5.1",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.4.5"
+	}
+}
