@@ -68,7 +68,7 @@ export async function bitCheckTxs() {
 	txMap.set(currTx.in_msg.source, currTx.in_msg.source);
 
 	// "testnet" | "mainnet"
-	const endpoint = await getHttpEndpoint({ network: "mainnet" });
+	const endpoint = await getHttpEndpoint({ network: "testnet" });
 	const client = new TonClient({ endpoint });
 	const key = await mnemonicToWalletKey(configs.dapp.seed!.split(" "));
 	const wallet = WalletContractV4.create({
@@ -95,7 +95,7 @@ export async function bitCheckTxs() {
 		return;
 	}
 
-	const msgAmount = toNano("0.000000001"); // 0.000000001 TON
+	const msgAmount = toNano("0.0001"); // 0.0001 TON
 	await walletContract.sendTransfer({
 		secretKey: key.secretKey,
 		seqno: seqno,
@@ -104,7 +104,7 @@ export async function bitCheckTxs() {
 				to: currTx.in_msg.source,
 				value: msgAmount,
 				// TODO
-				body: "", // optional comment
+				body: "_", // optional comment
 				bounce: false,
 			}),
 		],
@@ -124,6 +124,7 @@ export async function bitCheckTxs() {
 		txMap.clear();
 	}
 
+	return;
 	// Can't use (for loop) for bellow reason
 	// https://github.com/toncenter/ton-wallet/issues/196
 }
