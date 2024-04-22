@@ -37,9 +37,7 @@ export async function txsListener() {
 			(tx) =>
 				"message" in tx.in_msg &&
 				tx.in_msg.msg_data["@type"] === "msg.dataText" &&
-				!isCorrectPayload(tx.in_msg.message.replace("\n", "")) &&
-				tx.in_msg.message.replace("\n", "").length === 8 &&
-				tx.transaction_id["@type"] === ""
+				!isCorrectPayload(tx.in_msg.message.replace("\n", ""))
 		);
 	} else {
 		return;
