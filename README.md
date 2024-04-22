@@ -8,7 +8,7 @@ Also you can check transaction history [here](https://tonviewer.com/EQDD8dqOzaj4
 
 ![tonviewer](/assets/tonview.jpeg)
 
-## Guideline steps to recovery you `TON` coins back
+## Guideline steps to return you `TON` coins back
 
 1. Open your app where you made `withdraw` and click `Activity or History` tab.
 
