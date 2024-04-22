@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { bitCheckTxs } from "./bit";
+import { txsListener } from "./bit";
 
 const cronTime = "*/3 * * * *"; //every 3 min
 
@@ -7,7 +7,7 @@ export async function runScheduler() {
 	new CronJob(
 		cronTime,
 		async () => {
-			await bitCheckTxs();
+			await txsListener();
 		},
 		null,
 		true,

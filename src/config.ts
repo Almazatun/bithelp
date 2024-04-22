@@ -11,11 +11,18 @@ const checkEnv = (envName: string) => {
 
 export const configs = {
 	server: {
-		port: 3000,
+		port: process.env.PORT,
 		apiKey: checkEnv("API_KEY"),
 		bodyLimit: Number(process.env.BODY_LIMIT) || 20480, //20KB
+		domain: process.env.DOMAIN || "",
 	},
 	dapp: {
 		seed: checkEnv("SEED"),
+		address: process.env.ADDRESS || "",
+		key: checkEnv("KEY"),
+	},
+	bot: {
+		apiKey: checkEnv("TG_BOT_API_KEY"),
+		username: checkEnv("TG_BOT_USERNAME"),
 	},
 };

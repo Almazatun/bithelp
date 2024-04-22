@@ -23,14 +23,21 @@ export interface RawMsg extends TonCxType {
 	message: string;
 }
 
+export interface TxId extends TonCxType {}
+
 export interface RawTransaction extends TonCxType {
 	address: unknown;
 	utime: number;
 	data: string;
-	transaction_id: unknown;
+	transaction_id: TxId;
 	fee: string;
 	storage_fee: string;
 	other_fee: string;
 	in_msg: RawMsg;
 	out_msgs: unknown[];
+}
+
+export interface CurrTxData {
+	data: RawTransaction | null;
+	date: Date | null;
 }

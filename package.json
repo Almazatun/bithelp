@@ -15,15 +15,21 @@
 		"@ton/core": "^0.56.3",
 		"@ton/crypto": "^3.2.0",
 		"@ton/ton": "^13.11.1",
+		"@types/cors": "^2.8.17",
 		"@types/cron": "^2.4.0",
+		"@types/crypto-js": "^4.2.2",
+		"@types/express": "^4.17.21",
 		"@types/node-fetch": "^2.6.11",
 		"bignumber.js": "^9.1.2",
 		"buffer": "^6.0.3",
+		"cors": "^2.8.5",
 		"cron": "^3.1.7",
+		"crypto-js": "^4.2.0",
 		"dotenv": "^16.4.5",
-		"fastify": "^4.26.2",
+		"express": "^4.19.2",
 		"node-fetch": "^2.6.11",
-		"nodemon": "^3.1.0"
+		"nodemon": "^3.1.0",
+		"telegraf": "^4.16.3"
 	},
 	"devDependencies": {
 		"@types/node": "^20.12.7",

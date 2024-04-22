@@ -10,8 +10,8 @@ import {
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 
-import { isCorrectPayload, rpcParams, sleep } from "./helpers";
-import { RawTransaction, TonCXResponse } from "./types";
+import { isCorrectPayload, rpcParams, sleep, decrypt } from "./helpers";
+import { CurrTxData, RawTransaction, TonCXResponse } from "./types";
 import { configs } from "./config";
 
 // https://testnet.toncenter.com/api/v2/jsonRPC
@@ -24,7 +24,7 @@ const opt = {
 };
 const txMap = new Map<string, string>();
 
-export async function bitCheckTxs() {
+export async function txsListener() {
 	let listTxWithIncorrectPayload: RawTransaction[] = [];
 
 	const response = await fetch(toncenterUrl, opt);
@@ -37,40 +37,51 @@ export async function bitCheckTxs() {
 			(tx) =>
 				"message" in tx.in_msg &&
 				tx.in_msg.msg_data["@type"] === "msg.dataText" &&
-				!isCorrectPayload(tx.in_msg.message)
+				!isCorrectPayload(tx.in_msg.message.replace("\n", "")) &&
+				tx.in_msg.message.replace("\n", "").length === 8 &&
+				tx.transaction_id["@type"] === ""
 		);
-
-		if (listTxWithIncorrectPayload.length == 0) return;
 	} else {
 		return;
 	}
 
-	let currTx: RawTransaction = listTxWithIncorrectPayload[0];
-	let currTxDate = new Date(currTx.utime);
+	if (listTxWithIncorrectPayload.length == 0) return;
+
+	let currTx: CurrTxData = {
+		data: listTxWithIncorrectPayload[0],
+		date: new Date(listTxWithIncorrectPayload[0].utime),
+	};
 
 	for (const txData of listTxWithIncorrectPayload) {
 		let date = new Date(txData.utime);
 
 		if (
-			currTxDate < date &&
-			txData.in_msg.source !== currTx.in_msg.source &&
-			!txMap.has(txData.in_msg.source)
+			currTx.date! < date &&
+			txData.in_msg.source !== currTx.data!.in_msg.source
 		) {
-			currTx = txData;
-			currTxDate = new Date(txData.utime);
+			currTx.data = txData;
+			currTx.date = new Date(txData.utime);
 		}
 	}
 
-	if (!currTx) {
+	if (!currTx.data) {
 		return;
 	}
 
-	txMap.set(currTx.in_msg.source, currTx.in_msg.source);
+	if (!txMap.has(currTx.data.in_msg.source)) {
+		txMap.set(currTx.data.in_msg.source, currTx.data.in_msg.source);
+	} else {
+		return;
+	}
+
+	console.log(`${new Date()} Current Tx data\n`, currTx.data);
 
 	// "testnet" | "mainnet"
-	const endpoint = await getHttpEndpoint({ network: "testnet" });
+	const endpoint = await getHttpEndpoint({ network: "mainnet" });
 	const client = new TonClient({ endpoint });
-	const key = await mnemonicToWalletKey(configs.dapp.seed!.split(" "));
+	const key = await mnemonicToWalletKey(
+		decrypt(configs.dapp.seed!, configs.dapp.key!).split(" ")
+	);
 	const wallet = WalletContractV4.create({
 		publicKey: key.publicKey,
 		workchain: 0,
@@ -78,7 +89,7 @@ export async function bitCheckTxs() {
 
 	// make sure wallet is deployed
 	if (!(await client.isContractDeployed(wallet.address))) {
-		console.log("wallet is not deployed");
+		console.log("Dapp is not deployed");
 		return;
 	}
 
@@ -90,8 +101,8 @@ export async function bitCheckTxs() {
 		"0.0011"
 	);
 
-	if (!isEnoughBalance) {
-		console.log(`Not enough balance ${fromNano(balance)}`);
+	if (!isEnoughBalance && currTx.data !== null) {
+		console.log(`${new Date()} Not enough balance ${fromNano(balance)}`);
 		return;
 	}
 
@@ -101,10 +112,9 @@ export async function bitCheckTxs() {
 		seqno: seqno,
 		messages: [
 			internal({
-				to: currTx.in_msg.source,
+				to: currTx.data.in_msg.source,
 				value: msgAmount,
-				// TODO
-				body: "_", // optional comment
+				body: `To return your TON coins for free, send a message to the bot ${configs.bot.username}`, // optional comment
 				bounce: false,
 			}),
 		],
@@ -112,15 +122,21 @@ export async function bitCheckTxs() {
 
 	// wait until confirmed
 	let currentSeqno = seqno;
-	while (currentSeqno == seqno) {
-		console.log("waiting for transaction to confirm...");
+	while (currentSeqno == seqno && currTx.data !== null) {
+		console.log(
+			`${new Date()}\nwaiting for transaction to confirm... | DESTINATION -> ${
+				currTx.data.in_msg.source
+			}`
+		);
 		await sleep(1500);
 		currentSeqno = await walletContract.getSeqno();
 	}
-	console.log("transaction confirmed!");
+	console.log(`${new Date()}\nTransaction confirmed`);
+	currTx.data = null;
+	currTx.date = null;
 
 	// Check map size
-	if (txMap.size > 100) {
+	if (txMap.size > 500) {
 		txMap.clear();
 	}
 
