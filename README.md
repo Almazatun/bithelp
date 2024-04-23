@@ -1,6 +1,6 @@
 # bithelp 🤖
 
-`Bithelp` is a simple notification app that helps people recover their TON coins. When people withdraw their ton coins to `CEX (Bybit)` sometimes some people don't know that or forget to add the wallet `identification wallet number` in the `payload` and their ton coins will be contained in the `global wallet`. People after that withdraw action don't know how to recover back their coins. For that reason down below you can find `guideline how you can return your TON coins back FOR FREE`.
+`Bithelp` is a simple notification app that helps people return their TON coins. When people withdraw their ton coins to `CEX (Bybit)` sometimes some people don't know that or forget to add the wallet `identification wallet number` in the `payload` and their ton coins will be contained in the `global wallet`. People after that withdraw action don't know how to return back their coins. For that reason down below you can find `guideline how you can return your TON coins back FOR FREE`.
 
 ## Real case you can look at below
 
